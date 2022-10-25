@@ -4,11 +4,13 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const socket = require('socket.io');
 
+const paths = [];
+let io;
+
 class WebSocket {
 
     constructor(port) {
         this.port = port;
-        this.imageInstructions = [];
         this.app = express();
 
         this.app.engine('hbs', hbs.engine({
@@ -28,7 +30,7 @@ class WebSocket {
             console.log(`Websocket listening on port ${this.server.address().port}`);
         });
 
-        this.io = socket(this.server);
+        io = socket(this.server);
         this.registerRoots();
     }
 
@@ -39,11 +41,11 @@ class WebSocket {
             });
         });
 
-        this.io.on('connection', this.userConnect);
+        io.on('connection', this.userConnect);
     }
 
     userConnect(socket) {
-        socket.emit("update", this.imageInstructions);
+        socket.emit("update", paths);
         socket.on("mouseDown", (data) => {
             const shape = {
                 "x": data.x,
@@ -51,8 +53,8 @@ class WebSocket {
                 "radius": data.radius,
                 "color": data.color
             };
-            this.imageInstructions.push(shape);
-            socket.emit("update", [shape]);
+            paths.push(shape);
+            io.emit("update", [shape]);
         })
     }
 }

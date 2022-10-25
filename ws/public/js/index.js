@@ -8,7 +8,7 @@ canvas.height = window.innerHeight;
 
 const ctx = canvas.getContext("2d");
 
-socket.on("update", drawReceivedData);
+socket.on("update", (data) => drawReceivedData(data));
 
 document.addEventListener('mousedown', e => {
     socket.emit("mouseDown", {
@@ -20,13 +20,13 @@ document.addEventListener('mousedown', e => {
 });
 
 function drawReceivedData(data) {
-    ctx.beginPath();
     data.forEach(shape => drawCircle(shape.x, shape.y, shape.radius, shape.color));
-    ctx.closePath();
 }
 
 function drawCircle(x, y, radius, color) {
+    ctx.beginPath();
     ctx.arc(x, y, radius, 0, 2 * Math.PI);
     ctx.fillStyle = color;
     ctx.fill();
+    ctx.closePath();
 }
