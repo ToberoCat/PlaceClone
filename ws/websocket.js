@@ -8,6 +8,7 @@ class WebSocket {
 
     constructor(port) {
         this.port = port;
+        this.imageInstructions = [];
         this.app = express();
 
         this.app.engine('hbs', hbs.engine({
@@ -19,7 +20,7 @@ class WebSocket {
         this.app.set('views', path.join(__dirname, "views"));
         this.app.set('view engine', "hbs");
         this.app.use(express.static(path.join(__dirname, 'public')));
-        this.app.use(bodyParser.urlencoded({ extended: false }));
+        this.app.use(bodyParser.urlencoded({extended: false}));
         this.app.use(bodyParser.json());
 
 
@@ -42,8 +43,16 @@ class WebSocket {
     }
 
     userConnect(socket) {
-        socket.on("message", (data) => {
-            console.log(data);
+        socket.emit("update", this.imageInstructions);
+        socket.on("mouseDown", (data) => {
+            const shape = {
+                "x": data.x,
+                "y": data.y,
+                "radius": data.radius,
+                "color": data.color
+            };
+            this.imageInstructions.push(shape);
+            socket.emit("update", [shape]);
         })
     }
 }
