@@ -10,12 +10,12 @@ const ctx = canvas.getContext("2d");
 
 socket.on("update", (data) => drawReceivedData(data));
 
-document.addEventListener('mousedown', e => {
+document.addEventListener('mousemove', e => {
     socket.emit("mouseDown", {
         "x": e.clientX,
         "y": e.clientY,
         "radius": 25,
-        "color": "green"
+        "color": `rgb(${Math.round(Math.random() * 255)},${Math.round(Math.random() * 255)},${Math.round(Math.random() * 255)})`
     });
 });
 
