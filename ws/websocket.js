@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const socket = require('socket.io');
 
-const paths = [];
+const paths = new Map();
 let io;
 
 class WebSocket {
@@ -48,12 +48,12 @@ class WebSocket {
         socket.emit("update", paths);
         socket.on("mouseDown", (data) => {
             const shape = {
-                "x": data.x,
-                "y": data.y,
                 "radius": data.radius,
                 "color": data.color
             };
-            paths.push(shape);
+            if (!paths.has(data.x))
+                paths[data.x] = new Map();
+            paths[data.x][data.y] = shape;
             io.emit("update", [shape]);
         })
     }
